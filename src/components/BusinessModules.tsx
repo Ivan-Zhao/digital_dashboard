@@ -6,14 +6,12 @@ function cn(...inputs: any[]) {
   return twMerge(clsx(inputs))
 }
 
-// 业务模块配置
 const businessModules = [
   {
     id: 'remote',
     name: '远程授权',
-    icon: '📡',
-    color: 'blue',
-    gradient: 'from-blue-500 to-cyan-500',
+    color: 'cyan',
+    gradient: 'from-cyan-500 to-blue-500',
     metrics: [
       { label: '排队笔数', key: 'queueCount', unit: '笔', value: 156 },
       { label: '前5分钟排队', key: 'waitTime5', unit: '分钟', value: 8.5 },
@@ -23,7 +21,6 @@ const businessModules = [
   {
     id: 'payment',
     name: '支付结算',
-    icon: '💳',
     color: 'green',
     gradient: 'from-green-500 to-emerald-500',
     metrics: [
@@ -34,7 +31,6 @@ const businessModules = [
   {
     id: 'domestic',
     name: '境内外汇',
-    icon: '🌐',
     color: 'purple',
     gradient: 'from-purple-500 to-pink-500',
     metrics: [
@@ -45,7 +41,6 @@ const businessModules = [
   {
     id: 'paymentFocus',
     name: '支付结算重点',
-    icon: '⭐',
     color: 'orange',
     gradient: 'from-orange-500 to-amber-500',
     metrics: [
@@ -56,7 +51,6 @@ const businessModules = [
   {
     id: 'other',
     name: '其他',
-    icon: '📋',
     color: 'gray',
     gradient: 'from-slate-500 to-gray-500',
     metrics: [
@@ -83,19 +77,16 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({ metric, color, isVisible,
       return
     }
 
-    const duration = 1500
+    const duration = 1200
     const startTime = Date.now()
-    const startDelay = delay + 200
+    const startDelay = delay + 100
 
     const timeout = setTimeout(() => {
       const animate = () => {
         const now = Date.now()
         const elapsed = now - startTime - startDelay
         const progress = Math.min(elapsed / duration, 1)
-        
-        // easeOutExpo
         const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
-        
         const currentValue = easeProgress * targetValue
         setDisplayValue(currentValue)
 
@@ -112,48 +103,25 @@ const MetricDisplay: React.FC<MetricDisplayProps> = ({ metric, color, isVisible,
 
   const getColorClass = () => {
     switch (color) {
-      case 'blue':
-        return 'text-cyan-300'
-      case 'green':
-        return 'text-green-300'
-      case 'purple':
-        return 'text-purple-300'
-      case 'orange':
-        return 'text-orange-300'
-      default:
-        return 'text-gray-300'
-    }
-  }
-
-  const getDotColor = () => {
-    switch (color) {
-      case 'blue':
-        return 'bg-blue-400'
-      case 'green':
-        return 'bg-green-400'
-      case 'purple':
-        return 'bg-purple-400'
-      case 'orange':
-        return 'bg-orange-400'
-      default:
-        return 'bg-gray-400'
+      case 'blue': return 'text-cyan-400'
+      case 'green': return 'text-green-400'
+      case 'purple': return 'text-purple-400'
+      case 'orange': return 'text-orange-400'
+      default: return 'text-gray-400'
     }
   }
 
   return (
     <div
       className={cn(
-        'flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/30 group-hover:bg-slate-800/50 transition-all duration-300',
+        'flex items-center justify-between py-2',
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
       )}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: `${delay}ms`, transitionDuration: '500ms' }}
     >
-      <span className='text-xs text-slate-400 flex items-center gap-2'>
-        <span className={cn('h-1.5 w-1.5 rounded-full', getDotColor())} />
-        {metric.label}
-      </span>
+      <span className='text-xs text-slate-400'>{metric.label}</span>
       <div className='flex items-baseline gap-1'>
-        <span className={cn('text-lg font-bold tabular-nums transition-all duration-300', getColorClass())}>
+        <span className={cn('text-base font-bold tabular-nums', getColorClass())}>
           {metric.key.includes('Time') ? displayValue.toFixed(1) : Math.floor(displayValue)}
         </span>
         <span className='text-xs text-slate-500'>{metric.unit}</span>
@@ -169,33 +137,33 @@ interface ModuleCardProps {
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => {
-  const getColorClass = () => {
+  const getGradientClass = () => {
     switch (module.color) {
-      case 'blue':
-        return 'text-cyan-300'
-      case 'green':
-        return 'text-green-300'
-      case 'purple':
-        return 'text-purple-300'
-      case 'orange':
-        return 'text-orange-300'
-      default:
-        return 'text-gray-300'
+      case 'blue': return 'from-cyan-500/20 to-blue-500/10 border-cyan-500/30'
+      case 'green': return 'from-green-500/20 to-emerald-500/10 border-green-500/30'
+      case 'purple': return 'from-purple-500/20 to-pink-500/10 border-purple-500/30'
+      case 'orange': return 'from-orange-500/20 to-amber-500/10 border-orange-500/30'
+      default: return 'from-slate-500/20 to-gray-500/10 border-slate-500/30'
     }
   }
 
-  const getDotColor = () => {
+  const getGlowClass = () => {
     switch (module.color) {
-      case 'blue':
-        return 'bg-cyan-400'
-      case 'green':
-        return 'bg-green-400'
-      case 'purple':
-        return 'bg-purple-400'
-      case 'orange':
-        return 'bg-orange-400'
-      default:
-        return 'bg-gray-400'
+      case 'blue': return 'shadow-cyan-500/10'
+      case 'green': return 'shadow-green-500/10'
+      case 'purple': return 'shadow-purple-500/10'
+      case 'orange': return 'shadow-orange-500/10'
+      default: return 'shadow-slate-500/10'
+    }
+  }
+
+  const getBarColor = () => {
+    switch (module.color) {
+      case 'blue': return 'bg-gradient-to-r from-cyan-500 to-blue-500'
+      case 'green': return 'bg-gradient-to-r from-green-500 to-emerald-500'
+      case 'purple': return 'bg-gradient-to-r from-purple-500 to-pink-500'
+      case 'orange': return 'bg-gradient-to-r from-orange-500 to-amber-500'
+      default: return 'bg-gradient-to-r from-slate-500 to-gray-500'
     }
   }
 
@@ -204,69 +172,30 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
   return (
     <div
       className={cn(
-        'relative group transition-all duration-700',
-        isVisible
-          ? 'translate-x-0 opacity-100'
-          : '-translate-x-12 opacity-0'
+        'relative transition-all duration-700',
+        isVisible ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
       )}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      {/* 背景光效 */}
-      <div
-        className={cn(
-          'absolute inset-0 rounded-lg bg-gradient-to-br opacity-5 group-hover:opacity-10 transition-opacity duration-500',
-          module.gradient
-        )}
-      />
-
-      {/* 主卡片 */}
-      <div className='relative rounded-lg border bg-gradient-to-br from-slate-900/90 to-slate-800/60 backdrop-blur-xl p-4 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-lg overflow-hidden'>
-        {/* 左侧渐变条 */}
-        <div
-          className={cn(
-            'absolute left-0 top-0 bottom-0 w-1 rounded-l-lg bg-gradient-to-b',
-            module.gradient
-          )}
-        />
-
-        {/* 顶部装饰线 */}
-        <div className='absolute top-0 left-1 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent' />
-
-        {/* 扫描线效果 */}
-        <div
-          className='absolute inset-0 overflow-hidden pointer-events-none'
-          style={{
-            background: 'linear-gradient(transparent 50%, rgba(0, 212, 255, 0.02) 50%)',
-            backgroundSize: '100% 4px'
-          }}
-        />
-
+      <div className={cn(
+        'rounded-xl border bg-gradient-to-br p-3 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg',
+        getGradientClass(),
+        getGlowClass()
+      )}>
         {/* 头部 */}
-        <div className='flex items-center gap-3 mb-3'>
-          <div
-            className={cn(
-              'relative flex h-10 w-10 items-center justify-center rounded-lg text-xl bg-gradient-to-br',
-              module.gradient,
-              'shadow-lg'
-            )}
-          >
-            {module.icon}
-            {/* 脉冲光环 */}
-            <div
-              className={cn(
-                'absolute inset-0 rounded-lg animate-ping opacity-20 bg-gradient-to-br',
-                module.gradient
-              )}
-            />
-          </div>
-          <div className='flex-1'>
-            <h3 className='text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors duration-300'>
-              {module.name}
-            </h3>
-            <div className='flex items-center gap-2 mt-0.5'>
-              <div className={cn('h-1 w-1 rounded-full animate-pulse', getDotColor())} />
-              <span className='text-xs text-slate-500'>实时监控中</span>
+        <div className='flex items-center justify-between mb-3'>
+          <div>
+            <h3 className='text-sm font-semibold text-white'>{module.name}</h3>
+            <div className='flex items-center gap-1.5 mt-0.5'>
+              <span className='h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse' />
+              <span className='text-xs text-slate-500'>实时监控</span>
             </div>
+          </div>
+          <div className={cn(
+            'h-8 w-8 rounded-lg flex items-center justify-center bg-gradient-to-br',
+            module.gradient
+          )}>
+            <span className='text-xs font-bold text-white'>{module.metrics[0].value}</span>
           </div>
         </div>
 
@@ -278,38 +207,34 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
               metric={metric}
               color={module.color}
               isVisible={isVisible}
-              delay={100 + index * 50}
+              delay={100 + index * 80}
             />
           ))}
         </div>
 
         {/* 底部进度条 */}
-        <div className='mt-3 relative'>
+        <div className='mt-3'>
+          <div className='flex items-center justify-between mb-1'>
+            <span className='text-[10px] text-slate-500'>负载率</span>
+            <span className='text-[10px] text-slate-400 font-mono'>{loadRate.toFixed(0)}%</span>
+          </div>
           <div className='h-1 bg-slate-800/50 rounded-full overflow-hidden'>
             <div
-              className={cn(
-                'h-full rounded-full transition-all duration-1000 ease-out',
-                module.gradient
-              )}
+              className={cn('h-full rounded-full transition-all duration-1000 ease-out', getBarColor())}
               style={{
                 width: isVisible ? `${loadRate}%` : '0%',
-                transitionDelay: `${delay + 500}ms`
+                transitionDelay: `${delay + 400}ms`
               }}
             />
           </div>
-          <div className='absolute -top-3 right-0 text-[10px] text-slate-500'>
-            负载率
-          </div>
         </div>
 
-        {/* 右下角装饰 */}
-        <div
-          className={cn(
-            'absolute bottom-2 right-2 w-8 h-8 rounded-full opacity-10 group-hover:opacity-20 transition-opacity duration-500',
-            module.gradient,
-            'blur-sm'
-          )}
-        />
+        {/* 底部装饰线 */}
+        <div className={cn(
+          'absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r',
+          module.gradient,
+          'opacity-30'
+        )} />
       </div>
     </div>
   )
@@ -343,19 +268,20 @@ const BusinessModules: React.FC = () => {
       {/* 标题 */}
       <div
         className={cn(
-          'mb-4 transition-all duration-700',
-          isVisible ? 'translate-y-0 opacity-100' : '-translate-y-8 opacity-0'
+          'mb-3 transition-all duration-700',
+          isVisible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
         )}
       >
-        <div className='flex items-center gap-2 mb-2'>
-          <div className='h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent' />
-          <div className='flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-cyan-500/20'>
-            <div className='w-2 h-2 rounded-full bg-cyan-400 animate-pulse' />
-            <span className='text-xs font-medium text-cyan-300'>
-              业务板块监控
-            </span>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <div className='h-px w-6 bg-gradient-to-r from-transparent to-cyan-500/50' />
+            <span className='text-sm font-semibold text-cyan-300'>业务板块监控</span>
+            <div className='h-px flex-1 bg-gradient-to-r from-cyan-500/50 to-transparent' />
           </div>
-          <div className='h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent' />
+          <div className='flex items-center gap-1.5'>
+            <span className='h-2 w-2 rounded-full bg-green-400 animate-pulse' />
+            <span className='text-xs text-slate-500'>5个模块在线</span>
+          </div>
         </div>
       </div>
 
@@ -365,7 +291,7 @@ const BusinessModules: React.FC = () => {
           <ModuleCard
             key={module.id}
             module={module}
-            delay={index * 100}
+            delay={index * 120}
             isVisible={isVisible}
           />
         ))}
@@ -374,31 +300,24 @@ const BusinessModules: React.FC = () => {
       {/* 底部统计 */}
       <div
         className={cn(
-          'mt-4 p-3 rounded-lg bg-gradient-to-br from-slate-900/80 to-slate-800/60 border border-cyan-500/20 transition-all duration-700',
-          isVisible
-            ? 'translate-y-0 opacity-100'
-            : 'translate-y-8 opacity-0'
+          'mt-3 rounded-xl border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 via-slate-800/50 to-blue-500/10 p-3 transition-all duration-700',
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         )}
-        style={{ transitionDelay: '600ms' }}
+        style={{ transitionDelay: '700ms' }}
       >
         <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-2'>
-            <div className='w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold'>
-              ∑
+          <div className='flex items-center gap-3'>
+            <div className='h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30'>
+              <span className='text-white text-lg font-bold'>∑</span>
             </div>
             <div>
               <p className='text-xs text-slate-400'>总排队笔数</p>
-              <p className='text-lg font-bold text-cyan-300'>{totalQueue}</p>
+              <p className='text-xl font-bold text-cyan-300'>{totalQueue}</p>
             </div>
           </div>
-          <div className='flex items-center gap-3'>
-            <div className='text-right'>
-              <p className='text-xs text-slate-500'>待补录</p>
-              <p className='text-sm font-semibold text-orange-400'>{totalPending}</p>
-            </div>
-            <div className='w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg'>
-              <span className='text-white text-lg'>✓</span>
-            </div>
+          <div className='text-right'>
+            <p className='text-xs text-slate-500'>待补录笔数</p>
+            <p className='text-lg font-semibold text-orange-400'>{totalPending}</p>
           </div>
         </div>
       </div>
