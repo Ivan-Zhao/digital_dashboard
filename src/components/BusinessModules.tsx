@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { useCountUp } from '../hooks/useCountUp'
 
 function cn(...inputs: any[]) {
   return twMerge(clsx(inputs))
@@ -16,15 +15,10 @@ const businessModules = [
     color: 'blue',
     gradient: 'from-blue-500 to-cyan-500',
     metrics: [
-      { label: '排队笔数', key: 'queueCount', unit: '笔' },
-      { label: '前5分钟排队', key: 'waitTime5', unit: '分钟' },
-      { label: '当日累计排队', key: 'waitTimeDay', unit: '小时' }
-    ],
-    mockData: {
-      queueCount: 156,
-      waitTime5: 8.5,
-      waitTimeDay: 12.3
-    }
+      { label: '排队笔数', key: 'queueCount', unit: '笔', value: 156 },
+      { label: '前5分钟排队', key: 'waitTime5', unit: '分钟', value: 8.5 },
+      { label: '当日累计排队', key: 'waitTimeDay', unit: '小时', value: 12.3 }
+    ]
   },
   {
     id: 'payment',
@@ -33,13 +27,9 @@ const businessModules = [
     color: 'green',
     gradient: 'from-green-500 to-emerald-500',
     metrics: [
-      { label: '排队笔数', key: 'queueCount', unit: '笔' },
-      { label: '待补录笔数', key: 'pendingCount', unit: '笔' }
-    ],
-    mockData: {
-      queueCount: 89,
-      pendingCount: 23
-    }
+      { label: '排队笔数', key: 'queueCount', unit: '笔', value: 89 },
+      { label: '待补录笔数', key: 'pendingCount', unit: '笔', value: 23 }
+    ]
   },
   {
     id: 'domestic',
@@ -48,13 +38,9 @@ const businessModules = [
     color: 'purple',
     gradient: 'from-purple-500 to-pink-500',
     metrics: [
-      { label: '排队笔数', key: 'queueCount', unit: '笔' },
-      { label: '待补录笔数', key: 'pendingCount', unit: '笔' }
-    ],
-    mockData: {
-      queueCount: 45,
-      pendingCount: 12
-    }
+      { label: '排队笔数', key: 'queueCount', unit: '笔', value: 45 },
+      { label: '待补录笔数', key: 'pendingCount', unit: '笔', value: 12 }
+    ]
   },
   {
     id: 'paymentFocus',
@@ -63,13 +49,9 @@ const businessModules = [
     color: 'orange',
     gradient: 'from-orange-500 to-amber-500',
     metrics: [
-      { label: '排队笔数', key: 'queueCount', unit: '笔' },
-      { label: '待补录笔数', key: 'pendingCount', unit: '笔' }
-    ],
-    mockData: {
-      queueCount: 67,
-      pendingCount: 18
-    }
+      { label: '排队笔数', key: 'queueCount', unit: '笔', value: 67 },
+      { label: '待补录笔数', key: 'pendingCount', unit: '笔', value: 18 }
+    ]
   },
   {
     id: 'other',
@@ -78,15 +60,107 @@ const businessModules = [
     color: 'gray',
     gradient: 'from-slate-500 to-gray-500',
     metrics: [
-      { label: '排队笔数', key: 'queueCount', unit: '笔' },
-      { label: '待补录笔数', key: 'pendingCount', unit: '笔' }
-    ],
-    mockData: {
-      queueCount: 34,
-      pendingCount: 8
-    }
+      { label: '排队笔数', key: 'queueCount', unit: '笔', value: 34 },
+      { label: '待补录笔数', key: 'pendingCount', unit: '笔', value: 8 }
+    ]
   }
 ]
+
+interface MetricDisplayProps {
+  metric: any
+  color: string
+  isVisible: boolean
+  delay: number
+}
+
+const MetricDisplay: React.FC<MetricDisplayProps> = ({ metric, color, isVisible, delay }) => {
+  const [displayValue, setDisplayValue] = useState(0)
+  const targetValue = metric.value
+
+  useEffect(() => {
+    if (!isVisible) {
+      setDisplayValue(0)
+      return
+    }
+
+    const duration = 1500
+    const startTime = Date.now()
+    const startDelay = delay + 200
+
+    const timeout = setTimeout(() => {
+      const animate = () => {
+        const now = Date.now()
+        const elapsed = now - startTime - startDelay
+        const progress = Math.min(elapsed / duration, 1)
+        
+        // easeOutExpo
+        const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
+        
+        const currentValue = easeProgress * targetValue
+        setDisplayValue(currentValue)
+
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        }
+      }
+
+      requestAnimationFrame(animate)
+    }, startDelay)
+
+    return () => clearTimeout(timeout)
+  }, [isVisible, targetValue, delay])
+
+  const getColorClass = () => {
+    switch (color) {
+      case 'blue':
+        return 'text-cyan-300'
+      case 'green':
+        return 'text-green-300'
+      case 'purple':
+        return 'text-purple-300'
+      case 'orange':
+        return 'text-orange-300'
+      default:
+        return 'text-gray-300'
+    }
+  }
+
+  const getDotColor = () => {
+    switch (color) {
+      case 'blue':
+        return 'bg-blue-400'
+      case 'green':
+        return 'bg-green-400'
+      case 'purple':
+        return 'bg-purple-400'
+      case 'orange':
+        return 'bg-orange-400'
+      default:
+        return 'bg-gray-400'
+    }
+  }
+
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/30 group-hover:bg-slate-800/50 transition-all duration-300',
+        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <span className='text-xs text-slate-400 flex items-center gap-2'>
+        <span className={cn('h-1.5 w-1.5 rounded-full', getDotColor())} />
+        {metric.label}
+      </span>
+      <div className='flex items-baseline gap-1'>
+        <span className={cn('text-lg font-bold tabular-nums transition-all duration-300', getColorClass())}>
+          {metric.key.includes('Time') ? displayValue.toFixed(1) : Math.floor(displayValue)}
+        </span>
+        <span className='text-xs text-slate-500'>{metric.unit}</span>
+      </div>
+    </div>
+  )
+}
 
 interface ModuleCardProps {
   module: any
@@ -95,25 +169,37 @@ interface ModuleCardProps {
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => {
-  const [animatedMetrics, setAnimatedMetrics] = useState<Record<string, number>>({})
-
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        setAnimatedMetrics(module.mockData)
-      }, delay + 200)
-      return () => clearTimeout(timer)
+  const getColorClass = () => {
+    switch (module.color) {
+      case 'blue':
+        return 'text-cyan-300'
+      case 'green':
+        return 'text-green-300'
+      case 'purple':
+        return 'text-purple-300'
+      case 'orange':
+        return 'text-orange-300'
+      default:
+        return 'text-gray-300'
     }
-  }, [isVisible, delay, module.mockData])
-
-  const getMetricValue = (metric: any) => {
-    if (!isVisible) return 0
-    const value = module.mockData[metric.key]
-    if (metric.key.includes('Time')) {
-      return useCountUp(Math.floor(value * 10), 1500, isVisible) / 10
-    }
-    return useCountUp(value, 1500, isVisible)
   }
+
+  const getDotColor = () => {
+    switch (module.color) {
+      case 'blue':
+        return 'bg-cyan-400'
+      case 'green':
+        return 'bg-green-400'
+      case 'purple':
+        return 'bg-purple-400'
+      case 'orange':
+        return 'bg-orange-400'
+      default:
+        return 'bg-gray-400'
+    }
+  }
+
+  const loadRate = Math.min((module.metrics[0].value / 200) * 100, 100)
 
   return (
     <div
@@ -144,14 +230,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
         />
 
         {/* 顶部装饰线 */}
-        <div
-          className={cn(
-            'absolute top-0 left-1 right-0 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-30'
-          )}
-          style={{
-            backgroundImage: `linear-gradient(to right, transparent, ${module.color === 'blue' ? '#00d4ff' : module.color === 'green' ? '#00ff88' : module.color === 'purple' ? '#ff6bff' : module.color === 'orange' ? '#ff9800' : '#64748b'}, transparent)`
-          }}
-        />
+        <div className='absolute top-0 left-1 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent' />
 
         {/* 扫描线效果 */}
         <div
@@ -185,20 +264,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
               {module.name}
             </h3>
             <div className='flex items-center gap-2 mt-0.5'>
-              <div
-                className={cn(
-                  'h-1 w-1 rounded-full animate-pulse',
-                  module.color === 'blue'
-                    ? 'bg-cyan-400'
-                    : module.color === 'green'
-                    ? 'bg-green-400'
-                    : module.color === 'purple'
-                    ? 'bg-purple-400'
-                    : module.color === 'orange'
-                    ? 'bg-orange-400'
-                    : 'bg-gray-400'
-                )}
-              />
+              <div className={cn('h-1 w-1 rounded-full animate-pulse', getDotColor())} />
               <span className='text-xs text-slate-500'>实时监控中</span>
             </div>
           </div>
@@ -207,53 +273,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
         {/* 指标数据 */}
         <div className='space-y-2'>
           {module.metrics.map((metric: any, index: number) => (
-            <div
+            <MetricDisplay
               key={metric.key}
-              className={cn(
-                'flex items-center justify-between py-2 px-3 rounded-lg bg-slate-800/30 group-hover:bg-slate-800/50 transition-all duration-300',
-                isVisible ? 'translate-x-0' : 'translate-x-4'
-              )}
-              style={{ transitionDelay: `${delay + 100 + index * 50}ms` }}
-            >
-              <span className='text-xs text-slate-400 flex items-center gap-2'>
-                <span
-                  className={cn(
-                    'h-1.5 w-1.5 rounded-full',
-                    module.color === 'blue'
-                      ? 'bg-blue-400'
-                      : module.color === 'green'
-                      ? 'bg-green-400'
-                      : module.color === 'purple'
-                      ? 'bg-purple-400'
-                      : module.color === 'orange'
-                      ? 'bg-orange-400'
-                      : 'bg-gray-400'
-                  )}
-                />
-                {metric.label}
-              </span>
-              <div className='flex items-baseline gap-1'>
-                <span
-                  className={cn(
-                    'text-lg font-bold tabular-nums transition-all duration-300',
-                    module.color === 'blue'
-                      ? 'text-cyan-300'
-                      : module.color === 'green'
-                      ? 'text-green-300'
-                      : module.color === 'purple'
-                      ? 'text-purple-300'
-                      : module.color === 'orange'
-                      ? 'text-orange-300'
-                      : 'text-gray-300'
-                  )}
-                >
-                  {getMetricValue(metric).toFixed(
-                    metric.key.includes('Time') ? 1 : 0
-                  )}
-                </span>
-                <span className='text-xs text-slate-500'>{metric.unit}</span>
-              </div>
-            </div>
+              metric={metric}
+              color={module.color}
+              isVisible={isVisible}
+              delay={100 + index * 50}
+            />
           ))}
         </div>
 
@@ -266,9 +292,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, delay, isVisible }) => 
                 module.gradient
               )}
               style={{
-                width: isVisible
-                  ? `${Math.min((module.mockData.queueCount / 200) * 100, 100)}%`
-                  : '0%',
+                width: isVisible ? `${loadRate}%` : '0%',
                 transitionDelay: `${delay + 500}ms`
               }}
             />
@@ -300,6 +324,19 @@ const BusinessModules: React.FC = () => {
     }, 300)
     return () => clearTimeout(timer)
   }, [])
+
+  const totalQueue = useMemo(() => 
+    businessModules.reduce((sum, m) => sum + m.metrics[0].value, 0),
+    []
+  )
+
+  const totalPending = useMemo(() =>
+    businessModules.reduce((sum, m) => {
+      const pendingMetric = m.metrics.find((metric: any) => metric.key === 'pendingCount')
+      return sum + (pendingMetric ? pendingMetric.value : 0)
+    }, 0),
+    []
+  )
 
   return (
     <div className='h-full flex flex-col'>
@@ -351,13 +388,13 @@ const BusinessModules: React.FC = () => {
             </div>
             <div>
               <p className='text-xs text-slate-400'>总排队笔数</p>
-              <p className='text-lg font-bold text-cyan-300'>391</p>
+              <p className='text-lg font-bold text-cyan-300'>{totalQueue}</p>
             </div>
           </div>
           <div className='flex items-center gap-3'>
             <div className='text-right'>
               <p className='text-xs text-slate-500'>待补录</p>
-              <p className='text-sm font-semibold text-orange-400'>61</p>
+              <p className='text-sm font-semibold text-orange-400'>{totalPending}</p>
             </div>
             <div className='w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg'>
               <span className='text-white text-lg'>✓</span>
