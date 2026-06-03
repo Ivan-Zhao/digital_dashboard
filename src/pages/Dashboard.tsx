@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Activity, Users, BarChart3, Globe, Zap } from 'lucide-react'
+import { Globe } from 'lucide-react'
 import MapChart from '../components/MapChart'
-import DataCard from '../components/DataCard'
 import TrendChart from '../components/TrendChart'
+import BusinessModules from '../components/BusinessModules'
 
 const Dashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState('')
@@ -29,7 +29,6 @@ const Dashboard: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    // 页面加载动画
     const timer = setTimeout(() => {
       setIsLoaded(true)
     }, 100)
@@ -71,7 +70,6 @@ const Dashboard: React.FC = () => {
           <div className='flex items-center gap-3'>
             <div className='relative flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500'>
               <Globe className='h-6 w-6 text-white' />
-              {/* 脉冲光环 */}
               <div className='absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 animate-ping opacity-20' />
             </div>
             <div>
@@ -93,59 +91,16 @@ const Dashboard: React.FC = () => {
 
         {/* 主要内容区域 */}
         <main className='flex-1 grid grid-cols-12 gap-4 overflow-hidden'>
-          {/* 左侧数据卡片区域 */}
-          <div className='col-span-3 flex flex-col gap-4'>
-            <DataCard
-              title='总访问量'
-              value={1284567}
-              unit='次'
-              icon={<Activity className='h-6 w-6 text-white' />}
-              color='blue'
-              trend={{ value: '12.5%', isUp: true }}
-              delay={0}
-            />
-            <DataCard
-              title='活跃用户'
-              value={89432}
-              unit='人'
-              icon={<Users className='h-6 w-6 text-white' />}
-              color='cyan'
-              trend={{ value: '8.2%', isUp: true }}
-              delay={100}
-            />
-            <DataCard
-              title='数据量'
-              value='2.8'
-              unit='TB'
-              icon={<BarChart3 className='h-6 w-6 text-white' />}
-              color='green'
-              trend={{ value: '5.1%', isUp: false }}
-              delay={200}
-            />
-            <DataCard
-              title='系统负载'
-              value={67.8}
-              unit='%'
-              icon={<Zap className='h-6 w-6 text-white' />}
-              color='purple'
-              trend={{ value: '3.2%', isUp: true }}
-              delay={300}
-            />
-
-            {/* 趋势图 */}
-            <div
-              className={`flex-1 rounded-lg border border-blue-500/30 bg-slate-900/70 p-4 backdrop-blur-sm transition-all duration-1000 ${
-                isLoaded
-                  ? 'translate-x-0 opacity-100'
-                  : '-translate-x-20 opacity-0'
-              }`}
-              style={{ transitionDelay: '400ms' }}
-            >
-              <h3 className='mb-2 text-sm font-medium text-slate-300'>访问趋势</h3>
-              <div className='h-[calc(100%-2rem)]'>
-                <TrendChart type='line' color='#00d4ff' />
-              </div>
-            </div>
+          {/* 左侧业务模块 */}
+          <div
+            className={`col-span-3 rounded-lg border border-blue-500/30 bg-slate-900/50 p-4 backdrop-blur-sm transition-all duration-1000 ${
+              isLoaded
+                ? 'translate-x-0 opacity-100'
+                : '-translate-x-20 opacity-0'
+            }`}
+            style={{ transitionDelay: '200ms' }}
+          >
+            <BusinessModules />
           </div>
 
           {/* 中间地图区域 */}
@@ -156,7 +111,7 @@ const Dashboard: React.FC = () => {
                   ? 'translate-y-0 opacity-100'
                   : 'translate-y-20 opacity-0'
               }`}
-              style={{ transitionDelay: '200ms' }}
+              style={{ transitionDelay: '300ms' }}
             >
               <div className='mb-2 flex items-center justify-between'>
                 <h3 className='text-sm font-medium text-slate-300'>全国数据分布</h3>
@@ -186,7 +141,7 @@ const Dashboard: React.FC = () => {
                   ? 'translate-x-0 opacity-100'
                   : 'translate-x-20 opacity-0'
               }`}
-              style={{ transitionDelay: '300ms' }}
+              style={{ transitionDelay: '400ms' }}
             >
               <h3 className='mb-2 text-sm font-medium text-slate-300'>数据统计</h3>
               <div className='h-[calc(100%-2rem)]'>
@@ -204,14 +159,14 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* 信息列表 */}
+            {/* 实时动态 */}
             <div
               className={`rounded-lg border border-blue-500/30 bg-slate-900/70 p-4 backdrop-blur-sm transition-all duration-1000 ${
                 isLoaded
                   ? 'translate-x-0 opacity-100'
                   : 'translate-x-20 opacity-0'
               }`}
-              style={{ transitionDelay: '400ms' }}
+              style={{ transitionDelay: '500ms' }}
             >
               <h3 className='mb-3 text-sm font-medium text-slate-300'>实时动态</h3>
               <div className='space-y-2'>
@@ -229,7 +184,7 @@ const Dashboard: React.FC = () => {
                         ? 'translate-x-0 opacity-100'
                         : 'translate-x-4 opacity-0'
                     }`}
-                    style={{ transitionDelay: `${500 + index * 100}ms` }}
+                    style={{ transitionDelay: `${600 + index * 100}ms` }}
                   >
                     <span className='mt-0.5 h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse' />
                     <span className='text-slate-500'>{item.time}</span>
