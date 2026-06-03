@@ -12,3 +12,232 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@layer utilities {
+  /* 扫描线动画 */
+  @keyframes scanline {
+    0% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(400%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* 脉冲光晕动画 */
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  /* 背景光效动画 */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+  }
+
+  /* 数据点闪烁动画 */
+  @keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+
+  /* 数字滚动动画 */
+  @keyframes countUp {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* 边框发光动画 */
+  @keyframes borderGlow {
+    0%, 100% {
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 5px rgba(0, 212, 255, 0.1);
+    }
+    50% {
+      border-color: rgba(0, 212, 255, 0.6);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    }
+  }
+
+  /* 飞线尾迹动画 */
+  @keyframes trailFade {
+    0% {
+      opacity: 1;
+      transform: translateX(0) scaleY(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-20px) scaleY(0.5);
+    }
+  }
+
+  /* 渐变背景动画 */
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* 波浪动画 */
+  @keyframes wave {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* 缩放脉冲 */
+  @keyframes scale-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+
+  /* 旋转光效 */
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 涟漪扩散 */
+  @keyframes ripple {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+}
+
+/* 应用动画类 */
+.animate-scanline {
+  animation: scanline 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-blink {
+  animation: blink 1s ease-in-out infinite;
+}
+
+.animate-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  animation: gradientShift 15s ease infinite;
+}
+
+.animate-wave {
+  animation: wave 25s linear infinite;
+}
+
+.animate-scale-pulse {
+  animation: scale-pulse 3s ease-in-out infinite;
+}
+
+.animate-rotate {
+  animation: rotate 10s linear infinite;
+}
+
+.animate-ripple {
+  animation: ripple 2s ease-out infinite;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 20, 40, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00d4ff, #0080ff);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00ffff, #00d4ff);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+/* 玻璃态效果增强 */
+.glass {
+  background: rgba(0, 20, 40, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+/* 发光效果 */
+.glow {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+              0 0 40px rgba(0, 212, 255, 0.3),
+              0 0 60px rgba(0, 212, 255, 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.8),
+               0 0 20px rgba(0, 212, 255, 0.6),
+               0 0 30px rgba(0, 212, 255, 0.4);
+}
+
+/* 渐变文字 */
+.gradient-text {
+  background: linear-gradient(135deg, #00d4ff, #00ff88, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
