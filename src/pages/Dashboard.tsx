@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Globe, Users, Activity, TrendingUp, Clock, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Clock, Users, Building2 } from 'lucide-react'
 import MapChart from '../components/MapChart'
-import TrendChart from '../components/TrendChart'
-import BusinessModules from '../components/BusinessModules'
 
 const Dashboard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState('')
@@ -22,7 +20,6 @@ const Dashboard: React.FC = () => {
       })
       setCurrentTime(timeStr)
     }
-
     updateTime()
     const timer = setInterval(updateTime, 1000)
     return () => clearInterval(timer)
@@ -35,313 +32,275 @@ const Dashboard: React.FC = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  const statsData = useMemo(() => [
-    { label: '在线用户', value: 2847, icon: Users, color: 'cyan' },
-    { label: '今日处理', value: 12580, icon: Activity, color: 'green' },
-    { label: '系统响应', value: '23ms', icon: Clock, color: 'purple' },
-    { label: '异常预警', value: 3, icon: AlertTriangle, color: 'orange' }
+  const businessData = useMemo(() => [
+    { name: '远程授权', value: 120223, trend: '+12.5%' },
+    { name: '支付结算', value: 77787, trend: '+8.3%' },
+    { name: '单位账户', value: 8753, trend: '+5.2%' },
+    { name: '境内外汇', value: 1489, trend: '+3.8%' }
   ], [])
 
-  const realtimeData = useMemo(() => [
-    { time: '10:23:45', type: 'success', content: '北京地区数据同步完成' },
-    { time: '10:22:18', type: 'warning', content: '上海节点负载偏高' },
-    { time: '10:20:05', type: 'success', content: '新用户注册成功' },
-    { time: '10:18:32', type: 'info', content: '服务器健康检查通过' },
-    { time: '10:15:40', type: 'success', content: '数据备份完成' }
+  const leftModules = useMemo(() => [
+    { name: '支付结算重点', queue: 4, pending: 5 },
+    { name: '境内外汇', queue: 5, pending: 6 },
+    { name: '支付结算重点', queue: 4, pending: 5 },
+    { name: '其他', queue: 5, pending: 6 },
+    { name: '远程授权', queue: 4, pending: 6 }
   ], [])
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'success': return 'text-green-400 bg-green-400/10'
-      case 'warning': return 'text-yellow-400 bg-yellow-400/10'
-      case 'info': return 'text-cyan-400 bg-cyan-400/10'
-      default: return 'text-gray-400 bg-gray-400/10'
-    }
-  }
+  const personnelData = useMemo(() => [
+    { department: '业务运营一部', online: 23, rate: '100%' },
+    { department: '业务运营二部', online: 2, rate: '100%' },
+    { department: '业务运营三部', online: 14, rate: '100%' },
+    { department: '业务运营一部', online: 18, rate: '100%' }
+  ], [])
+
+  const officeData = useMemo(() => [
+    { name: '市商路办公区', online: 25, rate: '01.%' },
+    { name: '科技路办公区', online: 32, rate: '099%' }
+  ], [])
+
+  const pieData = useMemo(() => [
+    { name: '远程授权', value: 57.74, color: '#00d4ff' },
+    { name: '支付结算', value: 37.35, color: '#00ff88' },
+    { name: '单位账户', value: 4.20, color: '#ff6b6b' }
+  ], [])
 
   return (
     <div className='min-h-screen w-full overflow-hidden bg-slate-950'>
-      {/* 动态背景光效 */}
-      <div className='fixed inset-0 opacity-20 pointer-events-none'>
-        <div className='absolute left-1/3 top-1/4 h-[500px] w-[500px] rounded-full bg-blue-600 blur-3xl animate-float' />
-        <div className='absolute right-1/4 bottom-1/3 h-[400px] w-[400px] rounded-full bg-cyan-600 blur-3xl animate-float' style={{ animationDelay: '-3s' }} />
-        <div className='absolute left-1/2 top-1/2 h-[300px] w-[300px] rounded-full bg-blue-500 blur-3xl animate-float' style={{ animationDelay: '-1.5s' }} />
+      <div className='fixed inset-0 opacity-10 pointer-events-none'>
+        <div className='absolute inset-0' style={{
+          backgroundImage: `
+            linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }} />
       </div>
 
-      {/* 网格背景 */}
-      <div className='fixed inset-0 opacity-3 pointer-events-none'>
-        <div
-          className='absolute inset-0'
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(0, 212, 255, 0.15) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 212, 255, 0.15) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }}
-        />
-      </div>
-
-      {/* 扫描线效果 */}
-      <div className='fixed inset-0 overflow-hidden pointer-events-none opacity-5'>
-        <div 
-          className='absolute w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent'
-          style={{
-            animation: 'scanline 8s linear infinite',
-            top: '0%'
-          }}
-        />
-      </div>
-
-      <div className='relative z-10 flex h-screen flex-col p-3'>
+      <div className='relative z-10 h-screen flex flex-col'>
         {/* 顶部标题栏 */}
-        <header
-          className={`mb-3 flex items-center justify-between rounded-xl border border-cyan-500/30 bg-gradient-to-r from-slate-900/90 via-slate-800/80 to-slate-900/90 p-4 backdrop-blur-xl transition-all duration-1000 ${
-            isLoaded
-              ? 'translate-y-0 opacity-100'
-              : '-translate-y-20 opacity-0'
-          }`}
-        >
+        <header className='flex items-center justify-between px-6 py-3 border-b border-cyan-500/20 bg-slate-900/80'>
           <div className='flex items-center gap-4'>
-            <div className='relative'>
-              <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30'>
-                <Globe className='h-7 w-7 text-white' />
+            <div className='flex items-center gap-2'>
+              <div className='h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center'>
+                <span className='text-white font-bold text-sm'>A</span>
               </div>
-              <div className='absolute -inset-1 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 opacity-30 blur-lg' />
-            </div>
-            <div>
-              <h1 className='text-xl font-bold text-white tracking-wider'>
-                <span className='bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent'>
-                  数字大屏可视化系统
-                </span>
-              </h1>
-              <p className='text-xs text-slate-400'>Real-time Data Monitoring Platform</p>
+              <div>
+                <h1 className='text-lg font-bold text-white tracking-wider'>AABS-GXNC</h1>
+              </div>
             </div>
           </div>
-
-          {/* 顶部统计卡片 */}
-          <div className='flex items-center gap-3'>
-            {statsData.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={`flex items-center gap-3 rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-2 transition-all duration-500 hover:border-cyan-500/50 hover:bg-slate-800/70 ${
-                  isLoaded
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-4 opacity-0'
-                }`}
-                style={{ transitionDelay: `${200 + index * 100}ms` }}
-              >
-                <stat.icon className={`h-5 w-5 ${
-                  stat.color === 'cyan' ? 'text-cyan-400' :
-                  stat.color === 'green' ? 'text-green-400' :
-                  stat.color === 'purple' ? 'text-purple-400' :
-                  'text-orange-400'
-                }`} />
-                <div>
-                  <p className='text-xs text-slate-400'>{stat.label}</p>
-                  <p className={`text-lg font-bold ${
-                    stat.color === 'cyan' ? 'text-cyan-300' :
-                    stat.color === 'green' ? 'text-green-300' :
-                    stat.color === 'purple' ? 'text-purple-300' :
-                    'text-orange-300'
-                  }`}>
-                    {stat.value}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 当前时间 */}
-          <div className='flex items-center gap-3 rounded-lg bg-slate-800/50 border border-slate-700/50 px-4 py-3'>
-            <Clock className='h-5 w-5 text-cyan-400' />
-            <div className='text-right'>
-              <p className='text-xs text-slate-400'>当前时间</p>
-              <p className='text-lg font-mono font-bold text-cyan-300 tracking-wider'>
-                {currentTime}
-              </p>
-            </div>
+          <div className='flex items-center gap-2 text-cyan-400 text-sm'>
+            <Clock className='h-4 w-4' />
+            <span className='font-mono'>{currentTime}</span>
           </div>
         </header>
 
         {/* 主要内容区域 */}
-        <main className='flex-1 grid grid-cols-12 gap-3 overflow-hidden'>
+        <main className='flex-1 flex overflow-hidden'>
           {/* 左侧业务模块 */}
-          <div
-            className={`col-span-3 rounded-xl border border-cyan-500/20 bg-gradient-to-b from-slate-900/80 to-slate-950/90 p-3 backdrop-blur-xl transition-all duration-1000 ${
-              isLoaded
-                ? 'translate-x-0 opacity-100'
-                : '-translate-x-20 opacity-0'
-            }`}
-            style={{ transitionDelay: '200ms' }}
-          >
-            <BusinessModules />
-          </div>
-
-          {/* 中间地图区域 */}
-          <div className='col-span-6 flex flex-col gap-3'>
-            {/* 地图 */}
-            <div
-              className={`flex-1 rounded-xl border border-cyan-500/30 bg-gradient-to-br from-slate-900/80 to-slate-800/60 p-4 backdrop-blur-xl transition-all duration-1000 ${
-                isLoaded
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-20 opacity-0'
-              }`}
-              style={{ transitionDelay: '300ms' }}
-            >
-              <div className='mb-3 flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='h-6 w-6 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center'>
-                    <Globe className='h-4 w-4 text-white' />
+          <div className='w-64 border-r border-cyan-500/20 bg-slate-900/60 p-4'>
+            <div className='mb-4'>
+              <h3 className='text-xs text-cyan-400 mb-3 font-medium tracking-wider'>当前时段排队情况</h3>
+              <div className='space-y-3'>
+                {leftModules.map((module, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg bg-slate-800/40 border border-slate-700/30 transition-all duration-500 ${
+                      isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                    }`}
+                    style={{ transitionDelay: `${100 + index * 80}ms` }}
+                  >
+                    <div className='flex items-center gap-2 mb-2'>
+                      <span className='h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse' />
+                      <span className='text-xs text-white font-medium'>{module.name}</span>
+                    </div>
+                    <div className='flex items-center justify-between text-xs'>
+                      <div className='flex items-center gap-3'>
+                        <span className='text-slate-400'>排队</span>
+                        <span className='text-cyan-400 font-bold'>{module.queue}笔</span>
+                      </div>
+                      <div className='flex items-center gap-3'>
+                        <span className='text-slate-400'>待补录</span>
+                        <span className='text-orange-400 font-bold'>{module.pending}笔</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className='text-sm font-semibold text-white'>全国数据分布</h3>
-                </div>
-                <div className='flex gap-4 text-xs'>
-                  <span className='flex items-center gap-1.5'>
-                    <span className='h-2 w-2 rounded-full bg-cyan-400 animate-pulse' />
-                    <span className='text-slate-400'>热点城市</span>
-                  </span>
-                  <span className='flex items-center gap-1.5'>
-                    <span className='h-2 w-2 rounded-full bg-green-400 animate-pulse' style={{ animationDelay: '0.5s' }} />
-                    <span className='text-slate-400'>飞线数据</span>
-                  </span>
-                  <span className='flex items-center gap-1.5'>
-                    <span className='h-2 w-2 rounded-full bg-purple-400 animate-pulse' style={{ animationDelay: '1s' }} />
-                    <span className='text-slate-400'>数据节点</span>
-                  </span>
-                </div>
-              </div>
-              <div className='h-[calc(100%-2.5rem)]'>
-                <MapChart />
+                ))}
               </div>
             </div>
 
-            {/* 底部统计 */}
-            <div
-              className={`rounded-xl border border-cyan-500/20 bg-gradient-to-r from-slate-900/70 via-slate-800/60 to-slate-900/70 p-3 backdrop-blur-xl transition-all duration-1000 ${
-                isLoaded
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-8 opacity-0'
-              }`}
-              style={{ transitionDelay: '400ms' }}
-            >
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-6'>
-                  <div className='flex items-center gap-2'>
-                    <div className='h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center'>
-                      <TrendingUp className='h-4 w-4 text-white' />
-                    </div>
-                    <div>
-                      <p className='text-xs text-slate-400'>业务总量</p>
-                      <p className='text-lg font-bold text-cyan-300'>431,580</p>
-                    </div>
-                  </div>
-                  <div className='h-8 w-px bg-slate-700' />
-                  <div className='flex items-center gap-2'>
-                    <div className='h-8 w-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center'>
-                      <CheckCircle className='h-4 w-4 text-white' />
-                    </div>
-                    <div>
-                      <p className='text-xs text-slate-400'>成功率</p>
-                      <p className='text-lg font-bold text-green-300'>99.8%</p>
-                    </div>
+            <div className={`mt-4 p-3 rounded-lg bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 transition-all duration-500 ${
+              isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+            }`} style={{ transitionDelay: '500ms' }}>
+              <h3 className='text-xs text-cyan-400 mb-3 font-medium'>排队平均时长</h3>
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-xs text-slate-400 mb-1'>前5分钟</p>
+                  <p className='text-lg font-bold text-cyan-300'>0.51秒</p>
+                </div>
+                <div>
+                  <p className='text-xs text-slate-400 mb-1'>当日累计</p>
+                  <p className='text-lg font-bold text-cyan-300'>6.41秒</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 中间地图区域 */}
+          <div className='flex-1 flex flex-col'>
+            {/* 顶部业务数据卡片 */}
+            <div className='flex gap-4 px-6 py-4 border-b border-cyan-500/20 bg-slate-900/40'>
+              {businessData.map((item, index) => (
+                <div
+                  key={item.name}
+                  className={`flex-1 p-4 rounded-xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-cyan-500/20 transition-all duration-500 ${
+                    isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                  }`}
+                  style={{ transitionDelay: `${100 + index * 100}ms` }}
+                >
+                  <p className='text-xs text-slate-400 mb-2'>{item.name}</p>
+                  <div className='flex items-baseline justify-between'>
+                    <span className='text-2xl font-bold text-cyan-300 tabular-nums'>
+                      {item.value.toLocaleString()}
+                    </span>
+                    <span className='text-xs text-green-400'>{item.trend}</span>
                   </div>
                 </div>
-                <div className='flex items-center gap-4'>
-                  <div className='text-right'>
-                    <p className='text-xs text-slate-400'>平均响应</p>
-                    <p className='text-lg font-bold text-purple-300'>18ms</p>
-                  </div>
-                  <div className='text-right'>
-                    <p className='text-xs text-slate-400'>峰值处理</p>
-                    <p className='text-lg font-bold text-orange-300'>1,850/s</p>
-                  </div>
+              ))}
+            </div>
+
+            {/* 地图区域 */}
+            <div className='flex-1 relative p-6'>
+              <div className='absolute inset-6 rounded-xl border border-cyan-500/30 bg-slate-900/60 overflow-hidden'>
+                <MapChart />
+              </div>
+              
+              {/* 业务总量中心标识 */}
+              <div className='absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-center'>
+                <div className='w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex flex-col items-center justify-center'>
+                  <span className='text-xs text-cyan-400 mb-1'>业务总量</span>
+                  <span className='text-xl font-bold text-cyan-300 tabular-nums'>208,252</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* 右侧区域 */}
-          <div className='col-span-3 flex flex-col gap-3'>
-            {/* 柱状图 */}
-            <div
-              className={`flex-[1.2] rounded-xl border border-cyan-500/20 bg-gradient-to-br from-slate-900/80 to-slate-800/60 p-4 backdrop-blur-xl transition-all duration-1000 ${
-                isLoaded
-                  ? 'translate-x-0 opacity-100'
-                  : 'translate-x-20 opacity-0'
-              }`}
-              style={{ transitionDelay: '400ms' }}
-            >
-              <div className='mb-3 flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='h-6 w-6 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center'>
-                    <Activity className='h-4 w-4 text-white' />
-                  </div>
-                  <h3 className='text-sm font-semibold text-white'>业务统计</h3>
-                </div>
-                <span className='text-xs text-slate-400'>今日数据</span>
+          <div className='w-72 border-l border-cyan-500/20 bg-slate-900/60 flex flex-col'>
+            {/* 人员在线情况 */}
+            <div className='p-4 border-b border-cyan-500/20'>
+              <div className='flex items-center gap-2 mb-4'>
+                <Users className='h-4 w-4 text-cyan-400' />
+                <h3 className='text-xs text-cyan-400 font-medium'>人员在线情况</h3>
               </div>
-              <div className='h-[calc(100%-2.5rem)]'>
-                <TrendChart
-                  type='bar'
-                  color='#00ff88'
-                  data={[
-                    { name: '北京', value: 2300 },
-                    { name: '上海', value: 1800 },
-                    { name: '广州', value: 1500 },
-                    { name: '深圳', value: 1700 },
-                    { name: '杭州', value: 1200 }
-                  ]}
-                />
-              </div>
-            </div>
-
-            {/* 实时动态 */}
-            <div
-              className={`flex-1 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-slate-900/80 to-slate-800/60 p-4 backdrop-blur-xl transition-all duration-1000 ${
-                isLoaded
-                  ? 'translate-x-0 opacity-100'
-                  : 'translate-x-20 opacity-0'
-              }`}
-              style={{ transitionDelay: '500ms' }}
-            >
-              <div className='mb-3 flex items-center gap-2'>
-                <div className='h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center'>
-                  <Clock className='h-4 w-4 text-white' />
-                </div>
-                <h3 className='text-sm font-semibold text-white'>实时动态</h3>
-                <span className='ml-auto flex items-center gap-1'>
-                  <span className='h-2 w-2 rounded-full bg-green-400 animate-pulse' />
-                  <span className='text-xs text-slate-400'>在线</span>
-                </span>
-              </div>
-              <div className='space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar'>
-                {realtimeData.map((item, index) => (
+              <div className='grid grid-cols-2 gap-3'>
+                {personnelData.map((item, index) => (
                   <div
                     key={index}
-                    className={`flex items-start gap-2 rounded-lg bg-slate-800/30 border border-slate-700/30 px-3 py-2 transition-all duration-300 hover:bg-slate-800/50 ${
-                      isLoaded
-                        ? 'translate-x-0 opacity-100'
-                        : 'translate-x-4 opacity-0'
+                    className={`p-3 rounded-lg bg-slate-800/40 border border-slate-700/30 transition-all duration-500 ${
+                      isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
                     }`}
-                    style={{ transitionDelay: `${600 + index * 100}ms` }}
+                    style={{ transitionDelay: `${200 + index * 80}ms` }}
                   >
-                    <span className={`mt-1 h-1.5 w-1.5 rounded-full ${
-                      item.type === 'success' ? 'bg-green-400' :
-                      item.type === 'warning' ? 'bg-yellow-400' :
-                      'bg-cyan-400'
-                    } animate-pulse`} />
-                    <div className='flex-1 min-w-0'>
-                      <div className='flex items-center gap-2'>
-                        <span className='text-xs text-slate-500 font-mono'>{item.time}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${getTypeColor(item.type)}`}>
-                          {item.type === 'success' ? '成功' : item.type === 'warning' ? '警告' : '信息'}
-                        </span>
-                      </div>
-                      <p className='text-xs text-slate-300 mt-1 truncate'>{item.content}</p>
+                    <p className='text-xs text-slate-400 mb-2 truncate'>{item.department}</p>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-sm font-bold text-white'>{item.online}</span>
+                      <span className='text-xs text-green-400'>{item.rate}</span>
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* 办公区 */}
+            <div className='p-4 border-b border-cyan-500/20'>
+              <div className='flex items-center gap-2 mb-4'>
+                <Building2 className='h-4 w-4 text-cyan-400' />
+                <h3 className='text-xs text-cyan-400 font-medium'>办公区</h3>
+              </div>
+              <div className='space-y-3'>
+                {officeData.map((item, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg bg-slate-800/40 border border-slate-700/30 transition-all duration-500 ${
+                      isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+                    }`}
+                    style={{ transitionDelay: `${500 + index * 80}ms` }}
+                  >
+                    <div className='flex items-center gap-2 mb-2'>
+                      <span className='h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse' />
+                      <span className='text-xs text-white'>{item.name}</span>
+                    </div>
+                    <div className='flex items-center justify-between text-xs'>
+                      <span className='text-slate-400'>在线人数</span>
+                      <span className='text-cyan-400 font-bold'>{item.online}</span>
+                    </div>
+                    <div className='flex items-center justify-between text-xs mt-1'>
+                      <span className='text-slate-400'>在线率</span>
+                      <span className='text-green-400 font-bold'>{item.rate}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 业务量占比 */}
+            <div className='flex-1 p-4 flex flex-col'>
+              <h3 className='text-xs text-cyan-400 font-medium mb-4'>各板块业务量占比</h3>
+              <div className='flex-1 flex flex-col items-center justify-center'>
+                <div className='relative w-32 h-32'>
+                  <svg viewBox='0 0 100 100' className='w-full h-full transform -rotate-90'>
+                    {(() => {
+                      let cumulativeOffset = 0
+                      return pieData.map((item, index) => {
+                        const startAngle = cumulativeOffset * 3.6 * (Math.PI / 180)
+                        const endAngle = (cumulativeOffset + item.value) * 3.6 * (Math.PI / 180)
+                        const largeArcFlag = item.value > 50 ? 1 : 0
+                        const x1 = 50 + 40 * Math.cos(startAngle)
+                        const y1 = 50 + 40 * Math.sin(startAngle)
+                        const x2 = 50 + 40 * Math.cos(endAngle)
+                        const y2 = 50 + 40 * Math.sin(endAngle)
+                        cumulativeOffset += item.value
+                        return (
+                          <path
+                            key={index}
+                            d={`M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+                            fill={item.color}
+                            opacity='0.8'
+                            className='transition-all duration-500'
+                            style={{
+                              transitionDelay: `${600 + index * 100}ms`,
+                              opacity: isLoaded ? 0.8 : 0
+                            }}
+                          />
+                        )
+                      })
+                    })()}
+                    <circle cx='50' cy='50' r='25' fill='#0f172a' />
+                  </svg>
+                  <div className='absolute inset-0 flex flex-col items-center justify-center'>
+                    <span className='text-lg font-bold text-cyan-300'>4.20</span>
+                    <span className='text-[10px] text-slate-400'>总笔数</span>
+                  </div>
+                </div>
+                <div className='mt-4 space-y-2 w-full'>
+                  {pieData.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center justify-between text-xs transition-all duration-500 ${
+                        isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+                      }`}
+                      style={{ transitionDelay: `${700 + index * 80}ms` }}
+                    >
+                      <div className='flex items-center gap-2'>
+                        <span className='w-2 h-2 rounded-full' style={{ backgroundColor: item.color }} />
+                        <span className='text-slate-300'>{item.name}</span>
+                      </div>
+                      <span className='text-cyan-400 font-bold'>{item.value}%</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
