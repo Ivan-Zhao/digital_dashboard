@@ -137,9 +137,7 @@ const MapChart: React.FC = () => {
                   trailLength: 0.35,
                   symbol: 'arrow',
                   symbolSize: 6,
-                  color: '#00ffff',
-                  shadowBlur: 15,
-                  shadowColor: '#00ffff'
+                  color: '#00ffff'
                 },
                 lineStyle: {
                   color: {
@@ -173,9 +171,7 @@ const MapChart: React.FC = () => {
                   trailLength: 0.45,
                   symbol: 'arrow',
                   symbolSize: 5,
-                  color: '#ff6b6b',
-                  shadowBlur: 12,
-                  shadowColor: '#ff6b6b'
+                  color: '#ff6b6b'
                 },
                 lineStyle: {
                   color: {
@@ -194,11 +190,11 @@ const MapChart: React.FC = () => {
                   curveness: 0.35
                 },
                 data: [
-                  [[116.46, 39.92], [120.19, 30.26]],
-                  [[121.48, 31.22], [118.78, 32.04]],
-                  [[104.06, 30.67], [106.55, 29.56]],
-                  [[114.31, 30.52], [108.94, 34.34]],
-                  [[120.19, 30.26], [114.07, 22.62]]
+                  { coords: [[116.46, 39.92], [120.19, 30.26]] },
+                  { coords: [[121.48, 31.22], [118.78, 32.04]] },
+                  { coords: [[104.06, 30.67], [106.55, 29.56]] },
+                  { coords: [[114.31, 30.52], [108.94, 34.34]] },
+                  { coords: [[120.19, 30.26], [114.07, 22.62]] }
                 ]
               },
               {
